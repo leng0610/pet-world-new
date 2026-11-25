@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>萌宠星球 · Pet World</title>
+<style>
+:root{--ink:#3c3654;--pink:#ff8fba;--purple:#8b7cf6;--mint:#83dfc1;--cream:#fff9ee}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#fce7f3,#e9e7ff 55%,#dff8ef);font-family:system-ui,-apple-system,"Noto Sans SC",sans-serif;color:var(--ink)}
+.wrap{max-width:1100px;margin:auto;padding:16px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.brand{font-weight:1000;font-size:clamp(21px,4vw,30px);letter-spacing:.5px}.brand span{color:#f06ca5}.coins{background:#fff;border:2px solid #fff;border-radius:18px;padding:9px 14px;font-weight:900;box-shadow:0 5px 16px #6d5c9a18}
+.layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(260px,.8fr);gap:14px}.card{background:#ffffffdf;border:2px solid #fff;border-radius:24px;box-shadow:0 12px 30px #6d5c9a1c;padding:14px}.scenehead{display:flex;justify-content:space-between;align-items:center;margin:0 3px 10px}.scenehead strong{font-size:18px}.pill{background:#eeeaff;border-radius:99px;padding:6px 10px;font-size:12px;font-weight:800}
+#scene{height:430px;border-radius:20px;overflow:hidden;position:relative;background:linear-gradient(#a9e4ff 0%,#d5f4ff 58%,#9be5bc 58%,#74d2a0 100%)}#scene canvas{width:100%;height:100%;display:block}
+.petname{text-align:center;font-size:20px;font-weight:950;margin:10px 0 2px}.mood{text-align:center;font-size:13px;color:#82799a}
+.pets{display:flex;gap:8px;overflow-x:auto;padding:10px 2px 4px}.pets button{flex:1;min-width:76px;background:#f7f4ff;border:2px solid transparent;box-shadow:none;padding:9px 5px;border-radius:16px;font-weight:800}.pets button.active{border-color:#a89aff;background:#eeeaff}.pets em{font-style:normal;display:block;font-size:24px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.stat{background:#f8f6ff;border-radius:15px;padding:9px}.stat b{font-size:12px}.bar{height:8px;border-radius:9px;background:#e5e0f1;margin-top:7px;overflow:hidden}.bar i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,#80d9b9,#9d8cf8);width:70%}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.actions button,.taskbtn{border:0;border-radius:15px;padding:11px 6px;font-weight:900;color:#4b4264;background:#fff0f6;box-shadow:0 4px 0 #f3c9dc;cursor:pointer}.actions button:nth-child(2){background:#fff5d9;box-shadow:0 4px 0 #f0dfad}.actions button:nth-child(3){background:#e6f8ef;box-shadow:0 4px 0 #c2ead5}.actions button:active,.taskbtn:active{transform:translateY(3px);box-shadow:none}
+.right h2{font-size:18px;margin:2px 0 10px}.section{margin-bottom:14px}.task{display:flex;align-items:center;gap:9px;background:#f8f6ff;padding:10px;border-radius:14px;margin:7px 0;font-size:13px}.task span{font-size:21px}.task small{display:block;color:#8a83a0}.taskbtn{margin-left:auto;padding:7px 10px;background:#e9e5ff;box-shadow:none;white-space:nowrap}.shopgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.shopitem{background:#fff5fa;border-radius:15px;padding:10px;text-align:center;font-size:13px}.shopitem span{font-size:26px;display:block}.shopitem button{margin-top:6px;border:0;border-radius:99px;background:#ffdaeb;padding:6px 10px;font-weight:800;color:#75445d}
+#toast{text-align:center;min-height:22px;font-size:13px;color:#786e99;font-weight:800;margin-top:10px}
+footer{text-align:center;color:#81799a;font-size:11px;padding:12px}
+@media(max-width:760px){.layout{grid-template-columns:1fr}.right{display:grid;grid-template-columns:1fr 1fr;gap:12px}.right .section{margin:0}.card{padding:11px}#scene{height:340px}}
+@media(max-width:460px){.right{grid-template-columns:1fr}.stats{gap:5px}.stat{padding:7px}.actions button{font-size:13px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <header class="top"><div class="brand">🌈 萌宠<span>星球</span> <small style="font-size:12px;color:#81799a">PET WORLD</small></div><div class="coins">🪙 <b id="coins">120</b></div></header>
+ <div class="layout">
+  <section class="card">
+   <div class="scenehead"><strong>🏡 我的梦幻庭院</strong><span class="pill">✨ 阳光明媚</span></div>
+   <div id="scene"></div>
+   <div class="petname" id="petname">棉花糖</div><div class="mood" id="mood">今天也要开心玩耍！</div>
+   <div class="pets" id="pets">
+    <button class="active" data-p="cat"><em>🐱</em>猫咪</button><button data-p="dog"><em>🐶</em>小狗</button><button data-p="bunny"><em>🐰</em>兔兔</button><button data-p="fox"><em>🦊</em>小狐狸</button><button data-p="panda"><em>🐼</em>熊猫</button><button data-p="bear"><em>🐻</em>小熊</button>
+   </div>
+   <div class="stats">
+    <div class="stat"><b>🍓 饱腹 <span id="foodN">78</span></b><div class="bar"><i id="foodB"></i></div></div>
+    <div class="stat"><b>💗 快乐 <span id="joyN">85</span></b><div class="bar"><i id="joyB"></i></div></div>
+    <div class="stat"><b>🫧 清洁 <span id="cleanN">90</span></b><div class="bar"><i id="cleanB"></i></div></div>
+   </div>
+   <div class="actions">
+    <button id="feed">🍓 喂点心</button><button id="play">🎾 玩游戏</button><button id="bath">🛁 洗香香</button>
+    <button id="cuddle">💞 摸摸头</button><button id="sleep">🌙 睡一觉</button><button id="dance">💃 跳舞</button>
+   </div>
+   <div id="toast">欢迎来到萌宠星球！选一只宠物开始冒险吧～</div>
+  </section>
+  <aside class="right">
+   <section class="card section">
+    <h2>🎯 今日小任务</h2>
+    <div class="task"><span>🍓</span><div>喂宠物一次<small>奖励：20金币</small></div><button class="taskbtn" id="taskFeed">领取</button></div>
+    <div class="task"><span>🎾</span><div>陪宠物玩一次<small>奖励：20金币</small></div><button class="taskbtn" id="taskPlay">领取</button></div>
+    <div class="task"><span>🫧</span><div>帮宠物洗澡<small>奖励：20金币</small></div><button class="taskbtn" id="taskBath">领取</button></div>
+   </section>
+   <section class="card section">
+    <h2>🛍️ 宠物小商店</h2>
+    <div class="shopgrid">
+     <div class="shopitem"><span>🎀</span>蝴蝶结<button data-buy="bow">30 🪙</button></div>
+     <div class="shopitem"><span>🧢</span>小帽子<button data-buy="hat">40 🪙</button></div>
+     <div class="shopitem"><span>🧸</span>毛绒玩具<button data-buy="toy">25 🪙</button></div>
+     <div class="shopitem"><span>🍰</span>草莓蛋糕<button data-buy="cake">15 🪙</button></div>
+    </div>
+   </section>
+  </aside>
+ </div>
+ <footer>萌宠星球 · 一个属于你的可爱小世界 ✨</footer>
+</div>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+const host=document.querySelector('#scene'),scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(36,1,.1,100);camera.position.set(0,2.7,8.6);camera.lookAt(0,1.25,0);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;host.appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xffffff,0x8bbd9b,2.1));let sun=new THREE.DirectionalLight(0xffffff,2.2);sun.position.set(-4,7,5);sun.castShadow=true;scene.add(sun);
+const mat=(c,r=.8)=>new THREE.MeshStandardMaterial({color:c,roughness:r});
+function mesh(g,m,p,s,rot){let o=new THREE.Mesh(g,m);o.position.set(...p);if(s)o.scale.set(...s);if(rot)o.rotation.set(...rot);o.castShadow=true;o.receiveShadow=true;scene.add(o);return o}
+mesh(new THREE.BoxGeometry(12,.18,9),mat(0x8bd6a8),[0,-.15,0]);
+mesh(new THREE.BoxGeometry(12,3,.25),mat(0xffd8e9),[0,1.25,-3.2]);
+mesh(new THREE.BoxGeometry(.18,3,6.4),mat(0xffd8e9),[-5.9,1.25,0]);
+mesh(new THREE.BoxGeometry(.18,3,6.4),mat(0xffd8e9),[5.9,1.25,0]);
+// cottage-style wall details
+mesh(new THREE.BoxGeometry(2.3,1.5,.18),mat(0x9adcf5),[-3,1.15,-3.02]);
+mesh(new THREE.BoxGeometry(2.3,1.5,.18),mat(0x9adcf5),[3,1.15,-3.02]);
+for(let x of [-3,3]){mesh(new THREE.BoxGeometry(.12,1.5,.08),mat(0xffffff),[x,1.15,-2.9]);mesh(new THREE.BoxGeometry(2.3,.12,.08),mat(0xffffff),[x,1.15,-2.9])}
+mesh(new THREE.BoxGeometry(2.3,.15,1.1),mat(0xf7c7dd),[-3,.15,-2.3]);mesh(new THREE.BoxGeometry(2.3,.15,1.1),mat(0xf7c7dd),[3,.15,-2.3]);
+// flower beds + stepping stones
+for(let i=0;i<7;i++){let x=-4.8+i*1.6;mesh(new THREE.CylinderGeometry(.5,.5,.12,24),mat(0x6bbd82),[x,.0,2.7]);for(let j=0;j<5;j++){let a=j*Math.PI*2/5;mesh(new THREE.SphereGeometry(.16,16,12),mat([0xffa9cf,0xffe18a,0xb7a7ff][j%3]),[x+Math.cos(a)*.25,.2,2.7+Math.sin(a)*.25],[1,1,.7])}}
+for(let i=0;i<5;i++){mesh(new THREE.CylinderGeometry(.45,.45,.08,32),mat(0xd9c9bd),[-2+i, -.02,1.5])}
+let pet=new THREE.Group();scene.add(pet);let petType='cat',petColor=0xf2b6ca,clock=0,accessory=null;
+function ball(parent,pos,scale,color){let o=new THREE.Mesh(new THREE.SphereGeometry(1,32,24),mat(color));o.position.set(...pos);o.scale.set(...scale);o.castShadow=true;parent.add(o);return o}
+const palette={cat:0xf3b4c9,dog:0xc99365,bunny:0xf4e9e7,fox:0xf18b54,panda:0xf4f1ea,bear:0xb47c59};
+function buildPet(type){scene.remove(pet);pet=new THREE.Group();scene.add(pet);petType=type;let c=palette[type],ear=type==='fox'?0xe9783e:c;
+ ball(pet,[0,.95,0],[.78,.72,.62],c);ball(pet,[0,1.83,.05],[.62,.59,.54],c);
+ // ears
+ if(type==='bunny'){for(let x of [-.27,.27]){let e=ball(pet,[x,2.48,.02],[.17,.53,.13],c);e.rotation.z=x<0?-.15:.15;ball(pet,[x,2.48,.14],[.075,.38,.035],0xeaa3b4)}}
+ else if(type==='cat'||type==='fox'){for(let x of [-.4,.4]){let e=ball(pet,[x,2.3,0],[.23,.39,.16],ear);e.rotation.z=x<0?-.25:.25;if(type==='cat')ball(pet,[x,2.31,.13],[.12,.23,.035],0xe995ad)}}
+ else if(type==='dog'){for(let x of [-.5,.5]){let e=ball(pet,[x,1.98,0],[.2,.39,.17],0x86573d);e.rotation.z=x<0?-.5:.5}}
+ else {for(let x of [-.31,.31])ball(pet,[x,2.25,0],[.18,.25,.16],type==='panda'?0x26232b:0x86573d)}
+ // panda eye patches
+ for(let x of [-.23,.23]){if(type==='panda'){let patch=ball(pet,[x,1.91,.49],[.14,.18,.07],0x29252d);patch.rotation.z=x<0?-.3:.3}ball(pet,[x,1.92,.535],[.055,.075,.035],0x292b36);ball(pet,[x-.015,1.95,.566],[.018,.023,.012],0xffffff)}
+ ball(pet,[0,1.68,.55],[.22,.14,.13],type==='panda'?0xffffff:0xffdfd5);ball(pet,[0,1.73,.67],[.07,.05,.04],0x674451);
+ // paws
+ for(let x of [-.48,.48])ball(pet,[x,.28,.2],[.23,.28,.27],c);
+ let tail=ball(pet,[.78,1.02,-.18],[.3,.14,.16],type==='fox'?0xffe3d0:c);tail.rotation.z=.5;
+ pet.position.y=.05;
+ if(accessory)putAccessory(accessory);
+}
+function putAccessory(kind){if(!pet)return;let color=kind==='bow'?0xff5d9d:kind==='hat'?0x8a7cf5:0xffd05e;let a=ball(pet,[0,2.42,.03],kind==='hat'?[.34,.12,.3]:[.22,.13,.12],color);if(kind==='bow'){a.scale.set(.16,.1,.08);let l=ball(pet,[-.18,2.42,.03],[.13,.12,.08],color);l.rotation.z=.4;let r=ball(pet,[.18,2.42,.03],[.13,.12,.08],color);r.rotation.z=-.4}}
+buildPet('cat');
+function resize(){let w=host.clientWidth,h=host.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h)}new ResizeObserver(resize).observe(host);resize();
+let stats={food:78,joy:85,clean:90},coins=120,done={feed:false,play:false,bath:false};
+function say(t){document.querySelector('#toast').textContent=t;document.querySelector('#mood').textContent=t}
+function update(){for(let k in stats){document.querySelector('#'+k+'N').textContent=stats[k];document.querySelector('#'+k+'B').style.width=stats[k]+'%'}document.querySelector('#coins').textContent=coins}
+function add(k,n){stats[k]=Math.max(0,Math.min(100,stats[k]+n));update()}
+document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-p]').forEach(x=>x.classList.toggle('active',x===b));buildPet(b.dataset.p);let names={cat:'棉花糖',dog:'豆豆',bunny:'糯米团',fox:'橘子',panda:'团团',bear:'可可'};document.querySelector('#petname').textContent=names[b.dataset.p];say('新朋友登场啦！记得好好照顾它～')});
+document.querySelector('#feed').onclick=()=>{add('food',22);add('joy',4);say('咕噜咕噜吃得好香！🍓');done.feed=true};
+document.querySelector('#play').onclick=()=>{add('joy',20);add('food',-7);say('玩得超开心！🎾');done.play=true};
+document.querySelector('#bath').onclick=()=>{add('clean',28);add('joy',3);say('洗完澡香喷喷！🫧');done.bath=true};
+document.querySelector('#cuddle').onclick=()=>{add('joy',12);say('它开心地蹭蹭你的手～💞')};
+document.querySelector('#sleep').onclick=()=>{add('food',-2);add('joy',7);add('clean',-2);say('嘘……小家伙睡着啦。🌙')};
+document.querySelector('#dance').onclick=()=>{add('joy',14);say('一起扭扭！💃')};
+for(let k of ['feed','play','bath'])document.querySelector('#task'+k[0].toUpperCase()+k.slice(1)).onclick=e=>{if(done[k]){say('这项任务已经完成啦！');return}say('先完成「'+({feed:'喂食',play:'玩耍',bath:'洗澡'}[k])+'」再来领取奖励哦！')};
+document.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{let item=b.dataset.buy,cost={bow:30,hat:40,toy:25,cake:15}[item];if(coins<cost){say('金币不够啦，完成任务可以赚金币！');return}coins-=cost;if(item==='cake'){add('food',18);add('joy',5)}else if(item==='toy'){add('joy',15)}else{accessory=item;buildPet(petType)}update();say('购买成功！谢谢你给宠物准备礼物～🎁')});
+update();setInterval(()=>{add('food',-1);add('clean',-1)},30000);
+function animate(){requestAnimationFrame(animate);clock+=.025;pet.position.y=.06+Math.sin(clock*2.2)*.07;pet.rotation.y=Math.sin(clock*.7)*.13;renderer.render(scene,camera)}animate();
+</script>
+</body></html>
